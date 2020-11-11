@@ -104,6 +104,7 @@ class CheckBoxGroup(QWidget):
 class HistWidget(QWidget):
     _count = 0
     close_handler = pyqtSignal()
+
     def __init__(self, parent):
         super().__init__()
         self.close_handler.connect(partial(self.clear, parent, __class__._count))
@@ -209,7 +210,7 @@ class ClusterWidget(QWidget):
         self.canvas.plot(self.data_for_vis, self.parent.princ_cmp, active=self.parent.active,
                          text=' '.join([self.parent.cluster_method, '\n',
                                         str(self.parent.clusters_num), 'clusters']),
-                         annotations = self.parent.add_annotations)
+                         annotations=self.parent.add_annotations)
         matrix = self.parent.principalDf.loc[self.ind_to_keep]
         matrix['cluster'] = self.clusters
         matrix['id'] = self.parent.principalDf.index.values[self.ind_to_keep]
@@ -230,6 +231,7 @@ class ClusterWidget(QWidget):
                          text=' '.join([self.parent.cluster_method, '\n',
                                         str(self.parent.clusters_num), 'clusters']))
         self.table = ClusterDistWidget(self.parent, self.data_for_vis)
+        self.table_U_Test = ClusterUTestWidget(self.parent, self.data_for_vis)
 
     @property
     def preparing_and_clustering(self):
@@ -291,6 +293,43 @@ class ClusterDistWidget(QWidget):
         self.parent = parent
         self.clusters = np.unique(matrix['target'])
         self.matrix = matrix
+        self.values = self.calc_dist()
+        self.initUI()
+
+    def calc_dist(self):
+        dist_dict = {}
+        for group in self.clusters:
+            if self.parent.active == 'all data':
+                indicesToKeep = (self.matrix['target'] == group)
+            elif self.parent.active == 'only train':
+                indicesToKeep = (self.matrix['target'] == group) & (self.matrix['Active'] == 1)
+            else:  # active == 'only test'
+                indicesToKeep = (self.matrix['target'] == group) & (self.matrix['Active'] == 0)
+            df_s_group = self.matrix.loc[indicesToKeep, ['pc %i' % i for i in self.parent.comp_for_calc]]
+            not_df_s_group = self.matrix.loc[[not x for x in indicesToKeep],
+                                             ['pc %i' % i for i in self.parent.comp_for_calc]]
+            dist_dict[group] = [df_s_group, not_df_s_group]
+        vals = []
+        all_dist = scipy.spatial.distance.pdist(self.matrix[['pc %i' % i for i in self.parent.comp_for_calc]])
+        for group, (first, second) in dist_dict.items():
+            clust_dist = scipy.spatial.distance.cdist(first, second).ravel()
+            vals.append(clust_dist.mean())
+        vals.append(all_dist.mean())
+        return np.array(vals).reshape(1, len(vals))
+
+    def initUI(self):
+        self.matrix = MatrixWidget({'name': 'distance cluster',
+                                    'targets': [str(int(x)) for x in self.clusters] + ['all dist'],
+                                    'matrix': self.values}, self.parent)
+        self.matrix.show()
+
+
+class ClusterUTestWidget(QWidget):
+    def __init__(self, parent, matrix):
+        super().__init__()
+        self.parent = parent
+        self.clusters = np.unique(matrix['target'])
+        self.matrix = matrix
         self.values = self.calc_u_test()
         self.initUI()
 
@@ -305,19 +344,18 @@ class ClusterDistWidget(QWidget):
                 indicesToKeep = (self.matrix['target'] == group) & (self.matrix['Active'] == 0)
             df_s_group = self.matrix.loc[indicesToKeep, ['pc %i' % i for i in self.parent.comp_for_calc]]
             not_df_s_group = self.matrix.loc[[not x for x in indicesToKeep],
-                                         ['pc %i' % i for i in self.parent.comp_for_calc]]
+                                             ['pc %i' % i for i in self.parent.comp_for_calc]]
             dist_dict[group] = [df_s_group, not_df_s_group]
-        vals = []
+        p_vals = []
         all_dist = scipy.spatial.distance.pdist(self.matrix[['pc %i' % i for i in self.parent.comp_for_calc]])
         for group, (first, second) in dist_dict.items():
             clust_dist = scipy.spatial.distance.cdist(first, second).ravel()
-            vals.append(clust_dist.mean())
-        vals.append(all_dist.mean())
-        return np.array(vals).reshape(1, len(vals))
+            p_vals.append(stats.mannwhitneyu(all_dist, clust_dist, alternative='two-sided')[1])
+        return np.array(p_vals).reshape(1, len(p_vals))
 
     def initUI(self):
         self.matrix = MatrixWidget({'name': 'U-test cluster',
-                                    'targets': [str(int(x)) for x in self.clusters]+['all dist'],
+                                    'targets': [str(int(x)) for x in self.clusters],
                                     'matrix': self.values}, self.parent)
         self.matrix.show()
 
