@@ -169,6 +169,10 @@ class PCApp(QWidget):
         var_btn.clicked.connect(self.show_exp_var)
         self.grid.addWidget(var_btn, 4, 7, 2, 14)
 
+        load_btn = QPushButton('show loadings', self)
+        load_btn.clicked.connect(self.show_loadings)
+        self.grid.addWidget(load_btn, 8, 7, 2, 14)
+
     def create_save_btn(self, matrix, targets):
         button = QToolButton(self)
         button.setIcon(QIcon(os.path.join('icons', 'save_icon.png')))
@@ -183,6 +187,13 @@ class PCApp(QWidget):
         information = {'name': 'explained variance', 'targets': targets, 'matrix': matrix}
         self.exp_var = MatrixWidget(information, self)
         self.exp_var.show()
+
+    def show_loadings(self):
+        matrix = (self.PCA.pca.components_)
+        targets = self.included_features
+        information = {'name': 'loadings', 'targets': targets, 'matrix': matrix}
+        self.loadings = MatrixWidget(information, self)
+        self.loadings.show()
 
     def save_data(self, data, targets = None):
         """

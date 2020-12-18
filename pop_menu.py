@@ -176,7 +176,7 @@ class PopMenuDistance(PopMenu):
             self.parent.dist_information = str(e)
         else:
             self.parent.dist_information = {'name': 'distance',
-                                            'targets': targets + ['intro group dist'],
+                                            'targets': targets + ['intragroup dist'],
                                             'matrix': distance}
 
 

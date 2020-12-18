@@ -52,7 +52,7 @@ class PlotCanvas(FigureCanvas):
 
     def plot_single_group(self, principalDf, components, target, color, active, annotations):
         marker = 'o' if active == 1 else 'v'
-        label = str(target) if active == 0 else str(target) + ' train'
+        label = str(target) if active == 0 or  'cluster' in str(target) else str(target) + ' train'
         indicesToKeep = (principalDf['target'] == target) & (principalDf['Active'] == active)
         x_comp=principalDf.loc[indicesToKeep, 'pc %i' % components[0]]
         y_comp=principalDf.loc[indicesToKeep, 'pc %i' % components[1]]

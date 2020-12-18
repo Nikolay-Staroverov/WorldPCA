@@ -48,6 +48,9 @@ class MatrixWidget(QWidget):
 
             if information['name'] in ['distance', 'clusters', 'U-test']:
                 self.table.setVerticalHeaderLabels(targets)
+            if information['name'] in ['loadings','explained variance']:
+                self.table.setVerticalHeaderLabels(['pc%i' %i for i in (1, 2, 3, 4)])
+
             self.table.setHorizontalHeaderLabels(targets)
 
             if isinstance(self.matrix, pd.DataFrame):
@@ -252,7 +255,8 @@ class ClusterWidget(QWidget):
         data_for_vis = data_for_cluster.loc[:]
         data_for_cluster = data_for_cluster[['pc %i' % i for i in self.parent.comp_for_calc]]
         clusters = cl_method(n_clusters=self.parent.clusters_num).fit_predict(data_for_cluster)
-        data_for_vis['target'] = clusters
+        data_for_vis['target'] = ['cluster %i' % i for i in clusters]
+        data_for_vis['Active'] = 1
         return clusters, data_for_vis, ind_to_keep
 
     def closeEvent(self, event):
