@@ -9,6 +9,9 @@ from math import ceil
 import scipy.spatial.distance
 from scipy import stats
 import numpy as np
+import numpy.random.common
+import numpy.random.bounded_integers
+import numpy.random.entropy
 from widgets import *
 
 
@@ -132,9 +135,9 @@ class PopMenuDistance(PopMenu):
     def create_buttons(self):
 
         pc = self.parent.comp_for_calc
-        ref = 'all components' if len(pc) == 4 else f'Components {pc[0]} and {pc[1]}'
+        ref = 'components 1-4' if len(pc) == 4 else f'Components {pc[0]} and {pc[1]}'
         self.calc_comp_group = RadioBtnGroup('principal\ncomponents',
-                                             ['all components','Components 1 and 2','Components 3 and 4'],
+                                             ['components 1-4','Components 1 and 2','Components 3 and 4'],
                                              ref, self.parent.set_dist_components)
         self.grid.addWidget(self.calc_comp_group, 0, 0, 3, 1)
 
@@ -187,13 +190,13 @@ class PopMenuHist(PopMenu):
 
     def create_buttons(self):
         pc = self.parent.comp_for_calc
-        ref = 'all components' if len(pc) == 4 else f'Components {pc[0]} and {pc[1]}'
+        ref = 'components 1-4' if len(pc) == 4 else f'Components {pc[0]} and {pc[1]}'
 
         groups = pd.unique(self.parent.PCA.target['target'])
         if not self.parent.hist_group: self.parent.hist_group = groups[0]
 
         self.comp = RadioBtnGroup('principal\ncomponents',
-                                  ['all components', 'Components 1 and 2', 'Components 3 and 4',
+                                  ['components 1-4', 'Components 1 and 2', 'Components 3 and 4',
                                    'Components 2 and 3', 'Components 1 and 3',], ref,
                                    self.parent.set_dist_components)
 
@@ -216,9 +219,9 @@ class PopMenuCluster(PopMenu):
 
     def create_buttons(self):
         pc = self.parent.comp_for_calc
-        ref = 'all components' if len(pc) == 4 else f'Components {pc[0]} and {pc[1]}'
+        ref = 'components 1-4' if len(pc) == 4 else f'Components {pc[0]} and {pc[1]}'
         self.calc_comp_group = RadioBtnGroup('principal\ncomponents',
-                                             ['all components', 'Components 1 and 2', 'Components 3 and 4'],
+                                             ['components 1-4', 'Components 1 and 2', 'Components 3 and 4'],
                                              ref, self.parent.set_dist_components)
         self.grid.addWidget(self.calc_comp_group, 0, 0, 3, 1)
 

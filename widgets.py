@@ -4,6 +4,9 @@ from PyQt5.QtWidgets import (QWidget, QCheckBox, QVBoxLayout, QGridLayout, QButt
 from PyQt5.QtCore import QSize, pyqtSignal
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+import numpy.random.common
+import numpy.random.bounded_integers
+import numpy.random.entropy
 import numpy as np
 import pandas as pd
 import os.path
@@ -23,8 +26,7 @@ class MatrixWidget(QWidget):
 
     def __init__(self, information, parent):
         super().__init__()
-        self.setMaximumSize(900, 900)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         v_box = QVBoxLayout()
 
         if isinstance(information, str):
@@ -208,7 +210,6 @@ class ClusterWidget(QWidget):
 
         self.grid.addLayout(self.vbl, 0, 0, 5, 6)
         self.setLayout(self.grid)
-        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 
         self.canvas.plot(self.data_for_vis, self.parent.princ_cmp, active=self.parent.active,
                          text=' '.join([self.parent.cluster_method, '\n',
@@ -220,8 +221,6 @@ class ClusterWidget(QWidget):
 
         cluster_table = {'name': 'cluster', 'targets': matrix.columns.values, 'matrix': matrix}
         table = MatrixWidget(cluster_table, self.parent)
-        # table.setFixedHeight(780)
-        table.setFixedWidth(500)
         self.grid.addWidget(table, 0, 6, 5, 1)
         apr_cl_btn = QPushButton('approve clusters')
         apr_cl_btn.clicked.connect(lambda: self.aprove_func(table.matrix))

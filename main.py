@@ -4,6 +4,9 @@ from PyQt5.QtCore import QSize, pyqtSignal
 from PyQt5.QtGui import QIcon
 from sklearn import decomposition, preprocessing
 import sys
+import numpy.random.common
+import numpy.random.bounded_integers
+import numpy.random.entropy
 from functools import partial
 import pandas as pd
 
@@ -125,7 +128,7 @@ class PCApp(QWidget):
     def set_dist_components(self):
         source = self.sender()
         print(source.text())
-        if source.text() == 'all components':
+        if source.text() == 'components 1-4':
             self.comp_for_calc = (1, 2, 3, 4)
         else:
             self.comp_for_calc = tuple(int(y) for y in source.text() if y.isnumeric())
@@ -162,7 +165,7 @@ class PCApp(QWidget):
         table.resizeColumnsToContents()  # делаем ресайз колонок по содержимому
         self.grid.addWidget(table, 2, 5, 1, 18)  # Добавляем таблицу в сетку
 
-        save_btn = self.create_save_btn(self.principalDf, self.principalDf.columns.values)
+        save_btn = self.create_save_btn(pDf, pDf.columns.values)
         self.grid.addWidget(save_btn, 4, 5, 2, 7)
 
         var_btn = QPushButton('show explained variance', self)
@@ -183,8 +186,8 @@ class PCApp(QWidget):
 
     def show_exp_var(self):
         matrix = np.vstack([self.PCA.pca.explained_variance_, self.PCA.pca.explained_variance_ratio_]).T
-        targets =('explained variance', 'explained_variance_ratio')
-        information = {'name': 'explained variance', 'targets': targets, 'matrix': matrix}
+        targets =('eigenvalues', 'explained_variance_ratio')
+        information = {'name': 'eigenvalues', 'targets': targets, 'matrix': matrix}
         self.exp_var = MatrixWidget(information, self)
         self.exp_var.show()
 

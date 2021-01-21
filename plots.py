@@ -2,8 +2,12 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QSizePolicy
+import numpy.random.common
+import numpy.random.bounded_integers
+import numpy.random.entropy
 import pandas as pd
 import scipy.spatial
+from matplotlib import colors as mcolors
 
 
 class PlotCanvas(FigureCanvas):
@@ -27,7 +31,10 @@ class PlotCanvas(FigureCanvas):
         self.axes.set_title(text, fontsize=16)
 
         'each group always has the same color'
-        colors = ['k', 'b', 'g', 'm', 'r', 'y', 'c', 'gray', 'lime', 'olive']
+        colors = ['k', 'b', 'g', 'm', 'r', 'y', 'c', 'gray', 'lime', 'olive', 'darkgreen',
+                  'pink','mediumvioletred','violet','purple','indigo','fuchsia','darkred','brown',
+                  'mistyrose','firebrick']
+
         all_groups = pd.unique(principalDf['target'])
         groups = groups if groups is not None else all_groups
         targets = {x: y for x, y in zip(all_groups, colors) if x in groups}
