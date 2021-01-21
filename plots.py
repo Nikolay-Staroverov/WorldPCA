@@ -59,16 +59,16 @@ class PlotCanvas(FigureCanvas):
 
     def plot_single_group(self, principalDf, components, target, color, active, annotations):
         marker = 'o' if active == 1 else 'v'
-        label = str(target) if active == 0 or  'cluster' in str(target) else str(target) + ' train'
+        label = str(target) if active == 0 or 'cluster' in str(target) else str(target) + ' train'
         indicesToKeep = (principalDf['target'] == target) & (principalDf['Active'] == active)
         x_comp=principalDf.loc[indicesToKeep, 'pc %i' % components[0]]
         y_comp=principalDf.loc[indicesToKeep, 'pc %i' % components[1]]
         plot = self.axes.scatter(x_comp, y_comp, c=color, s=40, marker=marker, label=label)
 
-        data_labels = principalDf.index.values[indicesToKeep]
+        data_labels = principalDf.loc[indicesToKeep, 'Title']
         if annotations:
             for x, y, txt in zip(x_comp, y_comp, data_labels):
-                self.axes.annotate(txt, (x, y), xytext=(10, 10), textcoords='offset points')
+                self.axes.annotate(txt, (x, y), xytext=(8, 8), textcoords='offset points')
        
         return plot if any(indicesToKeep) else None
 

@@ -146,9 +146,8 @@ class PCApp(QWidget):
         pDf = self.principalDf
 
         indices = list(map(lambda x: x in self.data_groups, pDf['target']))
-        id = pDf.index.values[pDf.index.values[indices]]
         pDf = pDf.loc[indices]
-        pDf.insert(0, 'id', id)
+
         if self.active == 'only train':
             pDf = pDf.loc[pDf['Active'] == 1]
         elif self.active == 'only test':
@@ -220,6 +219,7 @@ class PCA:
 
         self.target = df[['target']]
         self.active = df[['Active']]
+        self.title = df[['Title']]
 
         indicesToKeep = df['Active'] == 1
         self.df_train = df.loc[indicesToKeep]
@@ -243,6 +243,7 @@ class PCA:
 
         principalDf['target'] = self.target
         principalDf['Active'] = self.active
+        principalDf.insert(0, 'Title',  self.title)
         return principalDf
 
 
