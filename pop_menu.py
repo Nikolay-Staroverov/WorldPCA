@@ -9,9 +9,7 @@ from math import ceil
 import scipy.spatial.distance
 from scipy import stats
 import numpy as np
-import numpy.random.common
-import numpy.random.bounded_integers
-import numpy.random.entropy
+
 from widgets import *
 
 

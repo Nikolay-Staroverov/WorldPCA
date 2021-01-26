@@ -2,9 +2,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from PyQt5.QtWidgets import QSizePolicy
-import numpy.random.common
-import numpy.random.bounded_integers
-import numpy.random.entropy
 import pandas as pd
 import scipy.spatial
 from matplotlib import colors as mcolors

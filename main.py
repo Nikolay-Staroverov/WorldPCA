@@ -4,9 +4,6 @@ from PyQt5.QtCore import QSize, pyqtSignal
 from PyQt5.QtGui import QIcon
 from sklearn import decomposition, preprocessing
 import sys
-import numpy.random.common
-import numpy.random.bounded_integers
-import numpy.random.entropy
 from functools import partial
 import pandas as pd
 
