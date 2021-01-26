@@ -56,7 +56,6 @@ class PopMenuFeatures(PopMenu):
 
         tg.PCA.df_train = tg.PCA.df_train[tg.included_features]
         tg.PCA.df = tg.PCA.df[tg.included_features]
-
         tg.PCA.fit()
 
     def create_buttons(self):

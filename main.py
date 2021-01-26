@@ -81,11 +81,14 @@ class PCApp(QWidget):
 
     def fit(self):
         self.PCA = PCA(self.base_name)
+        print(self.PCA)
         try:
             win = PopMenuFeatures(parent=self)
             win.show()
         except Exception as e: print(e)
         self.btn_dict['analyze'].setEnabled(True)
+        self.btn_dict['fit'].setEnabled(False)
+        self.btn_dict['load base'].setEnabled(False)
 
     def transform(self):
         win = PopMenuPlot(parent=self)
@@ -185,7 +188,7 @@ class PCApp(QWidget):
 
     def show_exp_var(self):
         matrix = np.vstack([self.PCA.pca.explained_variance_, self.PCA.pca.explained_variance_ratio_]).T
-        targets =('eigenvalues', 'explained_variance_ratio')
+        targets = ('eigenvalues', 'explained_variance_ratio')
         information = {'name': 'eigenvalues', 'targets': targets, 'matrix': matrix}
         self.exp_var = MatrixWidget(information, self)
         self.exp_var.show()
@@ -214,6 +217,7 @@ class PCApp(QWidget):
 
 
 class PCA:
+
     def __init__(self, data_name):
         df = pd.read_excel(data_name)
 
@@ -224,14 +228,14 @@ class PCA:
         indicesToKeep = df['Active'] == 1
         self.df_train = df.loc[indicesToKeep]
         self.df = df[[x for x in df.columns.values if x not in ['Active', 'target', 'Title']]]
-        self.pca = decomposition.PCA(n_components=4)
+        self.pca = decomposition.PCA(n_components=4, random_state=42)
 
     def fit(self, train=None):
         if not train: train = self.df_train
         train = train[[x for x in train.columns.values if x not in ['Active', 'target', 'Title']]]
+        train = (train - train.mean()) / train.std()
         train = train.to_numpy()
-        normalized_train = preprocessing.scale(train, axis=0)
-        self.pca.fit(normalized_train)
+        self.pca.fit(train)
 
     def transform(self, data=None):
         if not data: data = self.df
